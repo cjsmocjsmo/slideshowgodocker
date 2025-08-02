@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SlideShow</title>
+    <style>
+        body { 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 20px; 
+            background-color: black;
+        }
+        .imgDiv {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .imgContainer {
+            position: absolute;
+            transition: opacity 2s ease-in-out;
+        }
+        .imgContainer.active {
+            opacity: 1;
+        }
+        .imgContainer.inactive {
+            opacity: 0;
+        }  
+        .imgLand {
+            max-width: 1500px;
+            max-height: 844px;
+            border: 10px solid firebrick;
+            border-radius: 12px;
+            box-shadow: 0 0 10px purple;
+        }
+        .imgPort {
+            max-width: 619px;
+            max-height: 1100px;
+            border: 10px solid firebrick;
+            border-radius: 12px;
+            box-shadow: 0 0 10px purple;
+        }
+        .imgSquare {
+            max-width: 1500px;
+            max-height: 1500px;
+            border: 10px solid firebrick;
+            border-radius: 12px;
+            box-shadow: 0 0 10px purple;
+        }
+    </style>
+    <script>
+        let currentImageData = {
+            Name: "{{.Name}}",
+            Http: "{{.Http}}",
+            Orientation: "{{.Orientation}}"
+        };
+
+        // Function to try playing audio when page loads
+        function playAudio() {
+            const audio = document.getElementById('backgroundAudio');
+            const message = document.getElementById('audioMessage');
+            
+            if (audio) {
+                audio.play().then(() => {
+                    console.log('Audio started successfully');
+                    if (message) message.style.display = 'none';
+                }).catch(e => {
+                    console.log('Autoplay was prevented:', e);
+                    if (message) message.style.display = 'block';
+                });
+            }
+        }
+
+        // Function to update the image without page refresh
+        function updateImage() {
+            fetch('/api/current-image')
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.Http && data.Http !== currentImageData.Http) {
+                        currentImageData = data;
+                        
+                        const imgDiv = document.querySelector('.imgDiv');
+                        let imgClass = 'imgSquare'; // default
+                        
+                        if (data.Orientation === 'landscape') {
+                            imgClass = 'imgLand';
+                        } else if (data.Orientation === 'portrait') {
+                            imgClass = 'imgPort';
+                        }
+                        
+                        // Create new image container
+                        const newContainer = document.createElement('div');
+                        newContainer.className = 'imgContainer inactive';
+                        newContainer.innerHTML = `<img class="${imgClass}" src="${data.Http}" alt="${data.Name}">`;
+                        
+                        // Get current active container
+                        const activeContainer = imgDiv.querySelector('.imgContainer.active');
+                        
+                        // Add new container to imgDiv
+                        imgDiv.appendChild(newContainer);
+                        
+                        // Wait a bit for the image to load, then start transition
+                        const newImg = newContainer.querySelector('img');
+                        newImg.onload = function() {
+                            // Start fade transition
+                            newContainer.classList.remove('inactive');
+                            newContainer.classList.add('active');
+                            
+                            if (activeContainer) {
+                                activeContainer.classList.remove('active');
+                                activeContainer.classList.add('inactive');
+                                
+                                // Remove old container after transition completes
+                                setTimeout(() => {
+                                    if (activeContainer.parentNode) {
+                                        activeContainer.parentNode.removeChild(activeContainer);
+                                    }
+                                }, 2000); // Match the CSS transition duration
+                            }
+                        };
+                        
+                        // If image fails to load, still do the transition
+                        newImg.onerror = function() {
+                            console.error('Failed to load image:', data.Http);
+                            newContainer.classList.remove('inactive');
+                            newContainer.classList.add('active');
+                            
+                            if (activeContainer) {
+                                activeContainer.classList.remove('active');
+                                activeContainer.classList.add('inactive');
+                                setTimeout(() => {
+                                    if (activeContainer.parentNode) {
+                                        activeContainer.parentNode.removeChild(activeContainer);
+                                    }
+                                }, 2000);
+                            }
+                        };
+                        
+                        console.log('Image updated:', data.Name);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching image:', error);
+                });
+        }
+
+        // Start the slideshow update cycle
+        function startSlideshow() {
+            // Update image every 40 seconds
+            setInterval(updateImage, 40000);
+        }
+
+        // Try to play audio when page loads
+        window.addEventListener('load', function() {
+            setTimeout(playAudio, 1000); // Delay to help with loading
+            startSlideshow(); // Start the slideshow updates
+        });
+        
+        // Also try when user interacts with the page
+        document.addEventListener('click', function() {
+            const audio = document.getElementById('backgroundAudio');
+            const message = document.getElementById('audioMessage');
+            if (audio && audio.paused) {
+                audio.play().then(() => {
+                    if (message) message.style.display = 'none';
+                }).catch(e => console.log('Play failed:', e));
+            }
+        });
+        
+        // Handle audio errors
+        window.addEventListener('load', function() {
+            const audio = document.getElementById('backgroundAudio');
+            if (audio) {
+                audio.addEventListener('error', function(e) {
+                    console.log('Audio error:', e);
+                    const message = document.getElementById('audioMessage');
+                    if (message) {
+                        message.innerHTML = 'Audio stream unavailable. Click to retry.';
+                        message.style.display = 'block';
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Background music from 101.5 HANK FM Seattle & Mad Rock 102.5 -->
+    <audio id="backgroundAudio" autoplay loop controls style="position: fixed; bottom: 10px; right: 10px; z-index: 1000; opacity: 0.8;">
+        <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFMAAC.aac" type="audio/aac">
+        <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFM.mp3" type="audio/mpeg">
+        <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KMADFMAAC.aac" type="audio/aac">
+        <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KMADFM.mp3" type="audio/mpeg">
+        <source src="https://ice42.securenetsystems.net/KPLZ" type="audio/mpeg">
+        <source src="https://ice42.securenetsystems.net/KMAD" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    
+    <!-- Fallback: Show message if audio doesn't work -->
+    <div id="audioMessage" style="position: fixed; bottom: 60px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 10px; border-radius: 5px; font-size: 12px; display: none;">
+        Click the audio player to start music
+    </div>
+    
+    <div class="imgDiv">
+        <div class="imgContainer active">
+            {{if eq .Orientation "landscape"}}
+                <img class="imgLand" src="{{.Http}}" alt="{{.Name}}">
+            {{else if eq .Orientation "portrait"}}
+                <img class="imgPort" src="{{.Http}}" alt="{{.Name}}">
+            {{else}}
+                <img class="imgSquare" src="{{.Http}}" alt="{{.Name}}">
+            {{end}}
+        </div>
+    </div>
+</body>
+</html>

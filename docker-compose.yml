@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  slideshow:
+    build: .
+    ports:
+      - 8080:8080
+    volumes:
+      # Mount the database directory (contains imagesDB)
+      - /home/whitepi/go/slideshowgo:/home/pimedia/go/slideshowgo:rw
+      # Mount the pictures directory (for static file serving)
+      - /home/pimedia/Pictures:/home/pimedia/Pictures/test2:ro
+    environment:
+      - TZ=America/Los_Angeles
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    depends_on:
+      - db-init
+    
+  # Optional: Add a service to ensure database exists
+  db-init:
+    image: alpine:latest
+    volumes:
+      - /home/pimedia/go/slideshowgo:/home/pimedia/go/slideshowgo:rw
+    command: >
+      sh -c "
+        apk add --no-cache sqlite &&
+        if [ ! -f /home/whitepi/go/slideshowgo/imagesDB ]; then
+          echo 'Database not found. Please ensure imagesDB exists in /home/pimedia/go/slideshowgo/';
+          exit 1;
+        else
+          echo 'Database found. Ready to start slideshow.';
+        fi
+      "
