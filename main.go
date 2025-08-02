@@ -187,7 +187,7 @@ func getCurrentImageJSON(w http.ResponseWriter, r *http.Request) {
 // serveStaticFiles sets up a file server for static assets (like CSS, JS, images).
 func serveStaticFiles(router *mux.Router) {
 	// Serve static files from /home/pimedia/Pictures/
-	staticFileServer := http.FileServer(http.Dir("/home/pimedia/Pictures/"))
+	staticFileServer := http.FileServer(http.Dir("/media/whitepi/Atree/test2/"))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", staticFileServer))
 }
 
