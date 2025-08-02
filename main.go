@@ -24,7 +24,7 @@ type ImageData struct {
 
 // Global variable to store parsed templates
 var templates *template.Template
-var dbpath = "/home/whitepi/go/slideshowgo/imagesDB"
+var dbpath = "/home/whitepi/go/slideshowgodocker/imagesDB"
 var imagedir = "/media/whitepi/ATree/test2/"
 
 // Global variables for slideshow control

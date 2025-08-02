@@ -148,7 +148,7 @@ def main():
     """
     Main function to set up the database and process images.
     """
-    db_path = "/home/whitepi/go/slideshowgo/imagesDB"
+    db_path = "/home/whitepi/go/slideshowgodocker/imagesDB"
     image_dir = "/media/whitepi/ATree/test2/"
     
     create_img_db_table(db_path)
