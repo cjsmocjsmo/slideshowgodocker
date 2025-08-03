@@ -17,7 +17,7 @@ RUN go mod download
 COPY main.go ./
 
 # Build the application
-RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o slideshow main.go
+RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o slideshowgodocker main.go
 
 # Runtime stage
 FROM alpine:latest
@@ -30,11 +30,11 @@ WORKDIR /app
 
 # Create necessary directories and volume mount points
 RUN mkdir -p /app/templates \
-    && mkdir -p /app/slideshowgo \
+    && mkdir -p /app/slideshowgodocker \
     && mkdir -p /app/test2
 
 # Copy the binary from builder stage
-COPY --from=builder /app/slideshow .
+COPY --from=builder /app/slideshowgodocker .
 
 # Copy templates
 COPY templates/ ./templates/
@@ -50,4 +50,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:8080/ || exit 1
 
 # Run the application
-CMD ["./slideshow"]
+CMD ["./slideshowgodocker"]
