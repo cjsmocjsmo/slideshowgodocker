@@ -30,8 +30,8 @@ WORKDIR /app
 
 # Create necessary directories and volume mount points
 RUN mkdir -p /app/templates \
-    && mkdir -p /home/whitepi/go/slideshowgo \
-    && mkdir -p /home/whitepi/Pictures/test2
+    && mkdir -p /app/slideshowgo \
+    && mkdir -p /app/test2
 
 # Copy the binary from builder stage
 COPY --from=builder /app/slideshow .
@@ -40,7 +40,7 @@ COPY --from=builder /app/slideshow .
 COPY templates/ ./templates/
 
 # Create volumes for the specific paths your app needs
-VOLUME ["/home/pimedia/go/slideshowgo", "/home/pimedia/Pictures"]
+VOLUME ["/home/pimedia/go/slideshowgo", "/home/pimedia/Pictures/test2"]
 
 # Expose port
 EXPOSE 8080
