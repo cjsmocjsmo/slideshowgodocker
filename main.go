@@ -193,7 +193,7 @@ func helloWorldHandler(w http.ResponseWriter, r *http.Request) {
 // serveStaticFiles sets up a file server for static assets (like CSS, JS, images).
 func serveStaticFiles(router *mux.Router) {
 	// Serve static files from /home/pimedia/Pictures/
-	staticFileServer := http.FileServer(http.Dir("/media/whitepi/ATree/test2/"))
+	staticFileServer := http.FileServer(http.Dir("/app/test2/"))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", staticFileServer))
 }
 
