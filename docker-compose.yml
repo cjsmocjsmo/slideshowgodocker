@@ -7,7 +7,7 @@ services:
       - 8080:8080
     volumes:
       # Mount the database directory (contains imagesDB)
-      - /home/whitepi/go/slideshowgodocker:/app/slideshowgodocker:rw
+      - /home/whitepi/go/slideshowgodocker/imagesDB:/app/imagesDB:rw
       # Mount the pictures directory (for static file serving)
       - /media/whitepi/ATree/test2:/app/test2:ro
     environment:
