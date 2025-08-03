@@ -184,6 +184,12 @@ func getCurrentImageJSON(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(data)
 }
 
+// helloWorldHandler returns a simple "Hello World" message
+func helloWorldHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
+	w.Write([]byte("Hello World"))
+}
+
 // serveStaticFiles sets up a file server for static assets (like CSS, JS, images).
 func serveStaticFiles(router *mux.Router) {
 	// Serve static files from /home/pimedia/Pictures/
@@ -199,6 +205,9 @@ func main() {
 
 	// Register handlers for HTML templates
 	router.HandleFunc("/", homeHandler).Methods("GET")
+
+	// Add helloworld endpoint
+	router.HandleFunc("/helloworld", helloWorldHandler).Methods("GET")
 
 	// Add API endpoint for current image data
 	router.HandleFunc("/api/current-image", getCurrentImageJSON).Methods("GET")
