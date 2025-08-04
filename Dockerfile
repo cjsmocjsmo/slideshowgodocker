@@ -30,7 +30,7 @@ WORKDIR /app
 
 # Create necessary directories and volume mount points
 RUN mkdir -p /app/templates \
-    # && mkdir -p /app/slideshowgodocker \
+    && mkdir -p /app/DB \
     && mkdir -p /app/test2
 
 # Copy the binary from builder stage
