@@ -7,9 +7,9 @@ services:
       - 8080:8080
     volumes:
       # Mount the database directory (contains imagesDB)
-      - /home/whitepi/go/slideshowgodocker/DB:/app/DB:rw
+      - /home/pi/go/slideshowgodocker/DB:/app/DB:rw
       # Mount the pictures directory (for static file serving)
-      - /media/whitepi/ATree/test2:/app/test2:ro
+      - /media/pi/Pictures/test2:/app/test2:ro
     environment:
       - TZ=America/Los_Angeles
     restart: unless-stopped
@@ -30,7 +30,7 @@ services:
   #   command: >
   #     sh -c "
   #       apk add --no-cache sqlite &&
-  #       if [ ! -f /home/whitepi/go/slideshowgo/imagesDB ]; then
+  #       if [ ! -f /home/pi/go/slideshowgo/imagesDB ]; then
   #         echo 'Database not found. Please ensure imagesDB exists in /home/pimedia/go/slideshowgo/';
   #         exit 1;
   #       else
