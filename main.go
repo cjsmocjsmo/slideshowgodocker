@@ -217,7 +217,7 @@ func main() {
 	// You might create a `static` directory like `my-web-app/static/css/style.css`
 	serveStaticFiles(router)
 
-	port := ":8080"
+	port := ":8010"
 	fmt.Printf("Server starting on port %s\n", port)
 	log.Fatal(http.ListenAndServe(port, router))
 }

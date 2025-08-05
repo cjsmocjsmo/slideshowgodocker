@@ -4,7 +4,7 @@ services:
   slideshow:
     build: .
     ports:
-      - 8080:8080
+      - 8010:8010
     volumes:
       # Mount the database directory (contains imagesDB)
       - /home/pi/go/slideshowgodocker/DB:/app/DB:rw
