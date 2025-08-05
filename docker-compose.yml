@@ -9,7 +9,7 @@ services:
       # Mount the database directory (contains imagesDB)
       - /home/pi/go/slideshowgodocker/DB:/app/DB:rw
       # Mount the pictures directory (for static file serving)
-      - /media/pi/Pictures/test2:/app/test2:ro
+      - /home/pi/Pictures/test2:/app/test2:ro
     environment:
       - TZ=America/Los_Angeles
     restart: unless-stopped
