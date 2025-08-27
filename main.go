@@ -27,18 +27,45 @@ var (
        weatherCache WeatherData
 )
 
-const noaaURL = "https://api.weather.gov/points/47.4502,-122.8276/forecast"
+const noaaPointsURL = "https://api.weather.gov/points/47.4502,-122.8276"
 
 func fetchWeather() (WeatherData, error) {
-       resp, err := http.Get(noaaURL)
+       // Step 1: Get forecast URL from /points endpoint
+       resp, err := http.Get(noaaPointsURL)
        if err != nil {
 	       return WeatherData{}, err
        }
        defer resp.Body.Close()
        if resp.StatusCode != 200 {
-	       return WeatherData{}, fmt.Errorf("NOAA status: %d", resp.StatusCode)
+	       return WeatherData{}, fmt.Errorf("NOAA points status: %d", resp.StatusCode)
        }
        body, err := ioutil.ReadAll(resp.Body)
+       if err != nil {
+	       return WeatherData{}, err
+       }
+       var pointsResp struct {
+	       Properties struct {
+		       Forecast string `json:"forecast"`
+	       } `json:"properties"`
+       }
+       if err := json.Unmarshal(body, &pointsResp); err != nil {
+	       return WeatherData{}, err
+       }
+       forecastURL := pointsResp.Properties.Forecast
+       if forecastURL == "" {
+	       return WeatherData{}, fmt.Errorf("No forecast URL in NOAA points response")
+       }
+
+       // Step 2: Get forecast data from forecast URL
+       resp2, err := http.Get(forecastURL)
+       if err != nil {
+	       return WeatherData{}, err
+       }
+       defer resp2.Body.Close()
+       if resp2.StatusCode != 200 {
+	       return WeatherData{}, fmt.Errorf("NOAA forecast status: %d", resp2.StatusCode)
+       }
+       body2, err := ioutil.ReadAll(resp2.Body)
        if err != nil {
 	       return WeatherData{}, err
        }
@@ -51,7 +78,7 @@ func fetchWeather() (WeatherData, error) {
 		       } `json:"periods"`
 	       } `json:"properties"`
        }
-       if err := json.Unmarshal(body, &apiResp); err != nil {
+       if err := json.Unmarshal(body2, &apiResp); err != nil {
 	       return WeatherData{}, err
        }
        if len(apiResp.Properties.Periods) == 0 {
