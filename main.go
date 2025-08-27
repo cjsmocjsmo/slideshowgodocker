@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"sync"
@@ -13,6 +14,81 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/mattn/go-sqlite3"
 )
+
+type WeatherData struct {
+       Temperature string `json:"temperature"`
+       Description string `json:"description"`
+       Icon        string `json:"icon"`
+       FetchedAt   time.Time `json:"fetchedAt"`
+}
+
+var (
+       weatherMutex sync.RWMutex
+       weatherCache WeatherData
+)
+
+const noaaURL = "https://api.weather.gov/points/47.4502,-122.8276/forecast"
+
+func fetchWeather() (WeatherData, error) {
+       resp, err := http.Get(noaaURL)
+       if err != nil {
+	       return WeatherData{}, err
+       }
+       defer resp.Body.Close()
+       if resp.StatusCode != 200 {
+	       return WeatherData{}, fmt.Errorf("NOAA status: %d", resp.StatusCode)
+       }
+       body, err := ioutil.ReadAll(resp.Body)
+       if err != nil {
+	       return WeatherData{}, err
+       }
+       var apiResp struct {
+	       Properties struct {
+		       Periods []struct {
+			       Temperature int    `json:"temperature"`
+			       ShortForecast string `json:"shortForecast"`
+			       Icon string `json:"icon"`
+		       } `json:"periods"`
+	       } `json:"properties"`
+       }
+       if err := json.Unmarshal(body, &apiResp); err != nil {
+	       return WeatherData{}, err
+       }
+       if len(apiResp.Properties.Periods) == 0 {
+	       return WeatherData{}, nil
+       }
+       period := apiResp.Properties.Periods[0]
+       return WeatherData{
+	       Temperature: fmt.Sprintf("%d°F", period.Temperature),
+	       Description: period.ShortForecast,
+	       Icon: period.Icon,
+	       FetchedAt: time.Now(),
+       }, nil
+}
+
+func startWeatherUpdater() {
+       go func() {
+	       for {
+		       weather, err := fetchWeather()
+		       if err == nil {
+			       weatherMutex.Lock()
+			       weatherCache = weather
+			       weatherMutex.Unlock()
+		       } else {
+			       log.Printf("Weather fetch error: %v", err)
+		       }
+		       time.Sleep(15 * time.Minute)
+	       }
+       }()
+}
+
+func getWeatherHandler(w http.ResponseWriter, r *http.Request) {
+	weatherMutex.RLock()
+	weather := weatherCache
+	weatherMutex.RUnlock()
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(weather)
+}
 
 type ImageData struct {
 	Name        string
@@ -200,6 +276,8 @@ func serveStaticFiles(router *mux.Router) {
 func main() {
 	// Start the slideshow timer
 	startSlideshow()
+	// Start weather updater
+	startWeatherUpdater()
 
 	router := mux.NewRouter()
 
@@ -212,9 +290,10 @@ func main() {
 	// Add API endpoint for current image data
 	router.HandleFunc("/api/current-image", getCurrentImageJSON).Methods("GET")
 
+	// Add API endpoint for weather
+	router.HandleFunc("/api/weather", getWeatherHandler).Methods("GET")
+
 	// Serve static files (optional, but good practice for real apps)
-	// If you have CSS, JS, images, etc., put them in a 'static' folder.
-	// You might create a `static` directory like `my-web-app/static/css/style.css`
 	serveStaticFiles(router)
 
 	port := ":8010"
