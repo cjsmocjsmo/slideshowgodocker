@@ -11,8 +11,8 @@
             color: #fff;
             font-size: 1.5em;
             text-align: center;
-            padding: 12px 0 12px 0;
-            margin-bottom: 18px;
+            padding: 18px 0 18px 0;
+            margin-bottom: 8px;
             position: fixed;
             top: 0;
             left: 0;
@@ -48,25 +48,25 @@
             opacity: 0;
         }  
         .imgLand {
-            max-width: 1500px;
-            max-height: 844px;
+            max-width: 1400px;
+            max-height: 788px;
             border: 8px solid purple;
             border-radius: 12px;
-            box-shadow: 0 0 10px purple;
+            box-shadow: 0 0 12px purple;
         }
         .imgPort {
-            max-width: 619px;
-            max-height: 1100px;
+            max-width: 563px;
+            max-height: 1000px;
             border: 8px solid purple;
             border-radius: 12px;
-            box-shadow: 0 0 10px purple;
+            box-shadow: 0 0 12px purple;
         }
         .imgSquare {
-            max-width: 1500px;
-            max-height: 1500px;
+            max-width: 1400px;
+            max-height: 1400px;
             border: 8px solid purple;
             border-radius: 12px;
-            box-shadow: 0 0 10px purple;
+            box-shadow: 0 0 12px purple;
         }
     </style>
     <script>
@@ -77,7 +77,7 @@
                 .then(data => {
                     let bar = document.getElementById('weather-bar');
                     if (!bar) return;
-                    let icon = data.icon ? `<img src='${data.icon}' style='height:1.5em;vertical-align:middle;margin-right:8px;'>` : '';
+                    let icon = data.icon ? `<img src='${data.icon}' style='height:2em;vertical-align:middle;margin-right:8px;'>` : '';
                     let desc = data.description || '';
                     let temp = data.temperature || '';
                     bar.innerHTML = `${icon}${desc} ${temp}`;
