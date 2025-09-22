@@ -216,7 +216,7 @@ def main():
     Main function to set up the database and process images.
     """
     db_path = "/home/whitepi/go/slideshowgodocker/DB/imagesDB"
-    image_dir = "/home/pi/Pictures/"
+    image_dir = "/home/whitepi/Pictures/"
     
     create_img_db_table(db_path)
     walk_img_dir(db_path, image_dir)
