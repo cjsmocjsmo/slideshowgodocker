@@ -80,8 +80,18 @@
                     let icon = data.icon ? `<img src='${data.icon}' style='height:2em;vertical-align:middle;margin-right:8px;'>` : '';
                     let desc = data.description || '';
                     let temp = data.temperature || '';
-                    let localTemps = data.localTemps ? `<span style="color: purple; margin-left: 20px;">${data.localTemps}</span>` : '';
-                    bar.innerHTML = `${icon}${desc} ${temp}${localTemps}`;
+                    bar.innerHTML = `${icon}${desc} ${temp}`;
+                    
+                    // Fetch local temps separately
+                    fetch('/api/localtemps')
+                        .then(response => response.json())
+                        .then(localData => {
+                            let localTemps = localData.localTemps ? `<span style="color: purple; margin-left: 20px;">${localData.localTemps}</span>` : '';
+                            bar.innerHTML = `${icon}${desc} ${temp}${localTemps}`;
+                        })
+                        .catch(() => {
+                            // If local temps fail, just show weather without local temps
+                        });
                 })
                 .catch(() => {
                     let bar = document.getElementById('weather-bar');

@@ -19,7 +19,6 @@ type WeatherData struct {
        Temperature string `json:"temperature"`
        Description string `json:"description"`
        Icon        string `json:"icon"`
-       LocalTemps  string `json:"localTemps"`
        FetchedAt   time.Time `json:"fetchedAt"`
 }
 
@@ -29,7 +28,7 @@ var (
 )
 
 const noaaPointsURL = "https://api.weather.gov/points/47.4502,-122.8276"
-const localTempsURL = "http://10.0.4.60:8888/current_temps"
+const localTempsURL = "http://10.0.4.60:8888/current_temp"
 
 func fetchLocalTemps() string {
 	resp, err := http.Get(localTempsURL)
@@ -48,6 +47,13 @@ func fetchLocalTemps() string {
 		return ""
 	}
 	return string(body)
+}
+
+func getLocalTempsHandler(w http.ResponseWriter, r *http.Request) {
+	localTemps := fetchLocalTemps()
+	w.Header().Set("Content-Type", "application/json")
+	response := map[string]string{"localTemps": localTemps}
+	json.NewEncoder(w).Encode(response)
 }
 
 func fetchWeather() (WeatherData, error) {
@@ -106,12 +112,10 @@ func fetchWeather() (WeatherData, error) {
 	       return WeatherData{}, nil
        }
        period := apiResp.Properties.Periods[0]
-       localTemps := fetchLocalTemps()
        return WeatherData{
 	       Temperature: fmt.Sprintf("%d°F", period.Temperature),
 	       Description: period.ShortForecast,
 	       Icon: period.Icon,
-	       LocalTemps: localTemps,
 	       FetchedAt: time.Now(),
        }, nil
 }
@@ -343,6 +347,9 @@ func main() {
 
 	// Add API endpoint for weather
 	router.HandleFunc("/api/weather", getWeatherHandler).Methods("GET")
+
+	// Add API endpoint for local temps
+	router.HandleFunc("/api/localtemps", getLocalTempsHandler).Methods("GET")
 
 	// Serve static files (optional, but good practice for real apps)
 	serveStaticFiles(router)
