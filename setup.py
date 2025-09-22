@@ -100,7 +100,7 @@ def create_http_path(fpath: str) -> str:
     """
     Convert file system path to HTTP path by replacing the base directory.
     """
-    return fpath.replace("/home/pi/Pictures/test2/", "/static/")
+    return fpath.replace("/home/whitepi/Pictures/test3/", "/static/")
 
 
 def walk_img_dir(db_path: str, directory: str) -> Optional[Exception]:
@@ -215,8 +215,8 @@ def main():
     """
     Main function to set up the database and process images.
     """
-    db_path = "/home/pi/go/slideshowgodocker/DB/imagesDB"
-    image_dir = "/home/pi/Pictures/test2/"
+    db_path = "/home/whitepi/go/slideshowgodocker/DB/imagesDB"
+    image_dir = "/home/pi/Pictures/"
     
     create_img_db_table(db_path)
     walk_img_dir(db_path, image_dir)
