@@ -64,6 +64,8 @@ def mov_orient(mov_path: str) -> Tuple[int, int, str]:
         else:
             print("Square")
             return width, height, "square"
+    except ImportError:
+        raise Exception(f"OpenCV (cv2) is required to process video files. Install with: pip install opencv-python")
     except Exception as e:
         raise Exception(f"Error processing video {mov_path}: {e}")
     
