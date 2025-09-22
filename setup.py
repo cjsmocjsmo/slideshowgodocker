@@ -16,6 +16,7 @@ class ImageData:
     orientation: str
     width: int
     height: int
+    ext: str
 
 
 def img_orient(img_path: str) -> Tuple[int, int, str]:
@@ -39,6 +40,33 @@ def img_orient(img_path: str) -> Tuple[int, int, str]:
     except Exception as e:
         raise Exception(f"Error processing image {img_path}: {e}")
 
+def mov_orient(mov_path: str) -> Tuple[int, int, str]:
+    """
+    Determine the orientation of a video based on its dimensions.
+    Returns 'landscape', 'portrait', or 'square'.
+    """
+    try:
+        import cv2
+        cap = cv2.VideoCapture(mov_path)
+        if not cap.isOpened():
+            raise Exception(f"Cannot open video file {mov_path}")
+        
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        cap.release()
+        
+        if width > height:
+            print("Landscape")
+            return width, height, "landscape"
+        elif width < height:
+            print("Portrait")
+            return width, height, "portrait"
+        else:
+            print("Square")
+            return width, height, "square"
+    except Exception as e:
+        raise Exception(f"Error processing video {mov_path}: {e}")
+    
 
 def create_img_db_table(db_path: str) -> None:
     """
@@ -56,7 +84,8 @@ def create_img_db_table(db_path: str) -> None:
             Idx INTEGER,
             Orientation TEXT,
             Width INTEGER,
-            Height INTEGER
+            Height INTEGER,
+            Ext TEXT
         );"""
         
         cursor.execute(create_table_sql)
@@ -89,7 +118,7 @@ def walk_img_dir(db_path: str, directory: str) -> Optional[Exception]:
             for file in files:
                 idx += 1
                 file_path = os.path.join(root, file)
-                ext = os.path.splitext(file.lower())[1]
+                ext = os.path.splitext(file)[1].lower()
                 
                 if ext == ".jpg":
                     try:
@@ -102,13 +131,14 @@ def walk_img_dir(db_path: str, directory: str) -> Optional[Exception]:
                             idx=idx,
                             orientation=orientation,
                             width=width,
-                            height=height
+                            height=height,
+                            ext=ext
                         )
                         
                         print(image_data)
                         
-                        insert_sql = """INSERT INTO images (Name, Path, Http, Idx, Orientation, Width, Height) 
-                                       VALUES (?, ?, ?, ?, ?, ?, ?)"""
+                        insert_sql = """INSERT INTO images (Name, Path, Http, Idx, Orientation, Width, Height, Ext) 
+                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
                         cursor.execute(insert_sql, (
                             image_data.name,
                             image_data.path,
@@ -117,12 +147,49 @@ def walk_img_dir(db_path: str, directory: str) -> Optional[Exception]:
                             image_data.orientation,
                             image_data.width,
                             image_data.height,
+                            image_data.ext
                         ))
                         
                     except Exception as e:
                         print(f"Skipping image {file_path}: {e}")
                         failed_images.append(file_path)
                         continue
+
+                if ext == ".mp4" or ext == ".mkv":
+                    try:
+                        width, height, orientation = mov_orient(file_path)
+                        
+                        image_data = ImageData(
+                            name=file,
+                            path=file_path,
+                            http=create_http_path(file_path),
+                            idx=idx,
+                            orientation=orientation,
+                            width=width,
+                            height=height,
+                            ext=ext
+                        )
+                        
+                        print(image_data)
+                        
+                        insert_sql = """INSERT INTO images (Name, Path, Http, Idx, Orientation, Width, Height, Ext) 
+                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
+                        cursor.execute(insert_sql, (
+                            image_data.name,
+                            image_data.path,
+                            image_data.http,
+                            image_data.idx,
+                            image_data.orientation,
+                            image_data.width,
+                            image_data.height,
+                            image_data.ext
+                        ))
+                        
+                    except Exception as e:
+                        print(f"Skipping video {file_path}: {e}")
+                        failed_images.append(file_path)
+                        continue
+
         
         conn.commit()
         conn.close()

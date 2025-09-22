@@ -123,6 +123,7 @@ type ImageData struct {
 	Http        string
 	Idx         int
 	Orientation string
+	Ext         string
 }
 
 // Global variable to store parsed templates
@@ -205,15 +206,15 @@ func get_db_image(idx int) (ImageData, error) {
 		return ImageData{}, err
 	}
 	defer db.Close()
-	// Prepare the query to get image data by index
-	var img ImageData
-	query := "SELECT name, http, idx, orientation FROM images WHERE idx = ?"
-	err = db.QueryRow(query, idx).Scan(&img.Name, &img.Http, &img.Idx, &img.Orientation)
-	if err != nil {
-		log.Printf("Error querying get_db_image: %v", err)
-		return ImageData{}, err
-	}
-	return img, nil
+       // Prepare the query to get image data by index
+       var img ImageData
+       query := "SELECT name, http, idx, orientation, ext FROM images WHERE idx = ?"
+       err = db.QueryRow(query, idx).Scan(&img.Name, &img.Http, &img.Idx, &img.Orientation, &img.Ext)
+       if err != nil {
+	       log.Printf("Error querying get_db_image: %v", err)
+	       return ImageData{}, err
+       }
+       return img, nil
 }
 
 // startSlideshow starts the automatic slideshow timer

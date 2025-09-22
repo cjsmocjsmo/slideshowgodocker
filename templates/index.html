@@ -7,7 +7,7 @@
     <style>
         #weather-bar {
             width: 100vw;
-            background: #222;
+            background: black;
             color: #fff;
             font-size: 1.5em;
             text-align: center;
@@ -116,65 +116,77 @@
                 .then(data => {
                     if (data && data.Http && data.Http !== currentImageData.Http) {
                         currentImageData = data;
-                        
                         const imgDiv = document.querySelector('.imgDiv');
-                        let imgClass = 'imgSquare'; // default
-                        
-                        if (data.Orientation === 'landscape') {
-                            imgClass = 'imgLand';
-                        } else if (data.Orientation === 'portrait') {
-                            imgClass = 'imgPort';
-                        }
-                        
-                        // Create new image container
-                        const newContainer = document.createElement('div');
+                        let newContainer = document.createElement('div');
                         newContainer.className = 'imgContainer inactive';
-                        newContainer.innerHTML = `<img class="${imgClass}" src="${data.Http}" alt="${data.Name}">`;
-                        
-                        // Get current active container
-                        const activeContainer = imgDiv.querySelector('.imgContainer.active');
-                        
-                        // Add new container to imgDiv
-                        imgDiv.appendChild(newContainer);
-                        
-                        // Wait a bit for the image to load, then start transition
-                        const newImg = newContainer.querySelector('img');
-                        newImg.onload = function() {
-                            // Start fade transition
-                            newContainer.classList.remove('inactive');
-                            newContainer.classList.add('active');
-                            
-                            if (activeContainer) {
-                                activeContainer.classList.remove('active');
-                                activeContainer.classList.add('inactive');
-                                
-                                // Remove old container after transition completes
+                        let ext = (data.Ext || '').replace('.', '').toLowerCase();
+                        let activeContainer = imgDiv.querySelector('.imgContainer.active');
+                        if (ext === 'mp4') {
+                            // Video fade in/out logic
+                            newContainer.innerHTML = `<video class="imgLand" src="${data.Http}" controls autoplay style="opacity:0;" playsinline></video>`;
+                            imgDiv.appendChild(newContainer);
+                            let video = newContainer.querySelector('video');
+                            video.onloadeddata = function() {
+                                video.style.transition = 'opacity 2s';
+                                video.style.opacity = 1;
+                                newContainer.classList.remove('inactive');
+                                newContainer.classList.add('active');
+                            };
+                            video.onended = function() {
+                                video.style.opacity = 0;
+                                newContainer.classList.remove('active');
+                                newContainer.classList.add('inactive');
                                 setTimeout(() => {
-                                    if (activeContainer.parentNode) {
-                                        activeContainer.parentNode.removeChild(activeContainer);
-                                    }
-                                }, 2000); // Match the CSS transition duration
-                            }
-                        };
-                        
-                        // If image fails to load, still do the transition
-                        newImg.onerror = function() {
-                            console.error('Failed to load image:', data.Http);
-                            newContainer.classList.remove('inactive');
-                            newContainer.classList.add('active');
-                            
+                                    if (newContainer.parentNode) newContainer.parentNode.removeChild(newContainer);
+                                }, 2000);
+                            };
                             if (activeContainer) {
                                 activeContainer.classList.remove('active');
                                 activeContainer.classList.add('inactive');
                                 setTimeout(() => {
-                                    if (activeContainer.parentNode) {
-                                        activeContainer.parentNode.removeChild(activeContainer);
-                                    }
+                                    if (activeContainer.parentNode) activeContainer.parentNode.removeChild(activeContainer);
                                 }, 2000);
                             }
-                        };
-                        
-                        console.log('Image updated:', data.Name);
+                        } else {
+                            // Image fade in/out logic
+                            let imgClass = 'imgSquare';
+                            if (data.Orientation === 'landscape') {
+                                imgClass = 'imgLand';
+                            } else if (data.Orientation === 'portrait') {
+                                imgClass = 'imgPort';
+                            }
+                            newContainer.innerHTML = `<img class="${imgClass}" src="${data.Http}" alt="${data.Name}">`;
+                            imgDiv.appendChild(newContainer);
+                            const newImg = newContainer.querySelector('img');
+                            newImg.onload = function() {
+                                newContainer.classList.remove('inactive');
+                                newContainer.classList.add('active');
+                                if (activeContainer) {
+                                    activeContainer.classList.remove('active');
+                                    activeContainer.classList.add('inactive');
+                                    setTimeout(() => {
+                                        if (activeContainer.parentNode) {
+                                            activeContainer.parentNode.removeChild(activeContainer);
+                                        }
+                                    }, 2000);
+                                }
+                            };
+                            newImg.onerror = function() {
+                                console.error('Failed to load image:', data.Http);
+                                newContainer.classList.remove('inactive');
+                                newContainer.classList.add('active');
+                                if (activeContainer) {
+                                    activeContainer.classList.remove('active');
+                                    activeContainer.classList.add('inactive');
+                                    setTimeout(() => {
+                                        if (activeContainer.parentNode) {
+                                            activeContainer.parentNode.removeChild(activeContainer);
+                                        }
+                                    }, 2000);
+                                }
+                            };
+                        }
+                        console.log('Media updated:', data.Name);
                     }
                 })
                 .catch(error => {
@@ -243,12 +255,22 @@
     
     <div class="imgDiv">
         <div class="imgContainer active">
-            {{if eq .Orientation "landscape"}}
-                <img class="imgLand" src="{{.Http}}" alt="{{.Name}}">
-            {{else if eq .Orientation "portrait"}}
-                <img class="imgPort" src="{{.Http}}" alt="{{.Name}}">
-            {{else}}
-                <img class="imgSquare" src="{{.Http}}" alt="{{.Name}}">
+            {{if eq .Ext "mp4"}}
+                {{if eq .Orientation "landscape"}}
+                    <video class="imgLand" src="{{.Http}}" controls autoplay playsinline></video>
+                {{else if eq .Orientation "portrait"}}
+                    <video class="imgPort" src="{{.Http}}" controls autoplay playsinline></video>
+                {{else}}
+                    <video class="imgSquare" src="{{.Http}}" controls autoplay playsinline></video>
+                {{end}}
+            {{else if eq .Ext "jpg"}}
+                {{if eq .Orientation "landscape"}}
+                    <img class="imgLand" src="{{.Http}}" alt="{{.Name}}">
+                {{else if eq .Orientation "portrait"}}
+                    <img class="imgPort" src="{{.Http}}" alt="{{.Name}}">
+                {{else}}
+                    <img class="imgSquare" src="{{.Http}}" alt="{{.Name}}">
+                {{end}}
             {{end}}
         </div>
     </div>
