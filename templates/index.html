@@ -86,7 +86,7 @@
                     fetch('/api/localtemps')
                         .then(response => response.json())
                         .then(localData => {
-                            let localTemps = localData.localTemps.temperature_fahrenheit ? `<span style="color: purple; margin-left: 20px;">${localData.localTemps}</span>` : '';
+                            let localTemps = localData.localTemps ? `<span style="color: purple; margin-left: 20px;">${localData.localTemps}</span>` : '';
                             console.log('Local temps:', localTemps);
                             console.log(localData.localTemps.temperature_fahrenheit);
                             bar.innerHTML = `${icon}${desc} ${temp}${localTemps}`;
