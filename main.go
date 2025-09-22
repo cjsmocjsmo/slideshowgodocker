@@ -19,6 +19,7 @@ type WeatherData struct {
        Temperature string `json:"temperature"`
        Description string `json:"description"`
        Icon        string `json:"icon"`
+       LocalTemps  string `json:"localTemps"`
        FetchedAt   time.Time `json:"fetchedAt"`
 }
 
@@ -28,6 +29,26 @@ var (
 )
 
 const noaaPointsURL = "https://api.weather.gov/points/47.4502,-122.8276"
+const localTempsURL = "http://10.0.4.60:8888/current_temps"
+
+func fetchLocalTemps() string {
+	resp, err := http.Get(localTempsURL)
+	if err != nil {
+		log.Printf("Local temps fetch error: %v", err)
+		return ""
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		log.Printf("Local temps status: %d", resp.StatusCode)
+		return ""
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Local temps read error: %v", err)
+		return ""
+	}
+	return string(body)
+}
 
 func fetchWeather() (WeatherData, error) {
        // Step 1: Get forecast URL from /points endpoint
@@ -85,10 +106,12 @@ func fetchWeather() (WeatherData, error) {
 	       return WeatherData{}, nil
        }
        period := apiResp.Properties.Periods[0]
+       localTemps := fetchLocalTemps()
        return WeatherData{
 	       Temperature: fmt.Sprintf("%d°F", period.Temperature),
 	       Description: period.ShortForecast,
 	       Icon: period.Icon,
+	       LocalTemps: localTemps,
 	       FetchedAt: time.Now(),
        }, nil
 }

@@ -80,7 +80,8 @@
                     let icon = data.icon ? `<img src='${data.icon}' style='height:2em;vertical-align:middle;margin-right:8px;'>` : '';
                     let desc = data.description || '';
                     let temp = data.temperature || '';
-                    bar.innerHTML = `${icon}${desc} ${temp}`;
+                    let localTemps = data.localTemps ? `<span style="color: purple; margin-left: 20px;">${data.localTemps}</span>` : '';
+                    bar.innerHTML = `${icon}${desc} ${temp}${localTemps}`;
                 })
                 .catch(() => {
                     let bar = document.getElementById('weather-bar');
