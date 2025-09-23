@@ -86,9 +86,15 @@
                     fetch('/api/localtemps')
                         .then(response => response.json())
                         .then(localData => {
-                            let localTemps = localData.localTemps ? `<span style="color: purple; margin-left: 20px;">${localData.localTemps}</span>` : '';
-                            console.log('Local temps:', localTemps);
-                            console.log(localData.localTemps.temperature_fahrenheit);
+                            let localTemps = '';
+                            if (localData.localTemps) {
+                                try {
+                                    let tempData = JSON.parse(localData.localTemps);
+                                    localTemps = `<span style="color: purple; margin-left: 20px;">${tempData.temperature_fahrenheit}°F</span>`;
+                                } catch (e) {
+                                    console.log('Error parsing local temps:', e);
+                                }
+                            }
                             bar.innerHTML = `${icon}${desc} ${temp}${localTemps}`;
                         })
                         .catch(() => {
