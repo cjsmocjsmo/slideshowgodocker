@@ -116,7 +116,7 @@ def walk_img_dir(db_path: str, directory: str) -> Optional[Exception]:
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         
-        for root, dirs, files in os.walk(directory):
+        for root, dirs, files in os.walk(directory, followlinks=True):
             for file in files:
                 idx += 1
                 file_path = os.path.join(root, file)
