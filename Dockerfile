@@ -40,7 +40,7 @@ COPY --from=builder /app/slideshow .
 COPY templates/ ./templates/
 
 # Create volumes for the specific paths your app needs
-VOLUME ["/home/whitepi/go/slideshowgodocker/DB", "/home/whitepi/Pictures/""]
+VOLUME ["/home/whitepi/go/slideshowgodocker/DB", "/home/whitepi/Pictures/"]
 
 # Expose port
 EXPOSE 8010
