@@ -102,7 +102,7 @@ def create_http_path(fpath: str) -> str:
     """
     Convert file system path to HTTP path by replacing the base directory.
     """
-    return fpath.replace("/home/whitepi/Pictures/Clean", "/static/")
+    return fpath.replace("/home/whitepi/Pictures/Clean/", "/static/")
 
 
 def walk_img_dir(db_path: str, directory: str) -> Optional[Exception]:
