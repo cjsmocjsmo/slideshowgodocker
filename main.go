@@ -156,7 +156,7 @@ type ImageData struct {
 // Global variable to store parsed templates
 var templates *template.Template
 var dbpath = "/app/DB/imagesDB"
-var imagedir = "/app/test2/"
+var imagedir = "/app/Clean/"
 
 // Global variables for slideshow control
 var currentImageIdx int = 1
@@ -324,7 +324,7 @@ func helloWorldHandler(w http.ResponseWriter, r *http.Request) {
 // serveStaticFiles sets up a file server for static assets (like CSS, JS, images).
 func serveStaticFiles(router *mux.Router) {
 	// Serve static files from /home/pimedia/Pictures/
-	staticFileServer := http.FileServer(http.Dir("/app/test2/"))
+	staticFileServer := http.FileServer(http.Dir("/app/Clean/"))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", staticFileServer))
 }
 
