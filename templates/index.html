@@ -274,7 +274,7 @@
     
     <div class="imgDiv">
         <div class="imgContainer active">
-            {{if eq .Ext "mp4"}}
+            {{if eq .Ext ".mp4"}}
                 {{if eq .Orientation "landscape"}}
                     <video class="imgLand" src="{{.Http}}" controls autoplay playsinline></video>
                 {{else if eq .Orientation "portrait"}}
@@ -282,7 +282,7 @@
                 {{else}}
                     <video class="imgSquare" src="{{.Http}}" controls autoplay playsinline></video>
                 {{end}}
-            {{else if eq .Ext "jpg"}}
+            {{else if eq .Ext ".jpg"}}
                 {{if eq .Orientation "landscape"}}
                     <img class="imgLand" src="{{.Http}}" alt="{{.Name}}">
                 {{else if eq .Orientation "portrait"}}
