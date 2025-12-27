@@ -2,8 +2,8 @@ docker build -t slideshowgodocker .
 docker run -d \
   --name slideshowgodocker \
   -p 8010:8010 \
-  -v /home/piir/go/slideshowgodocker/DB:/app/DB:rw \
-  -v /home/pi/Pictures/test2:/app/test2:ro \
+  -v /home/pimedia/go/:/app/DB:rw \
+  -v /home/pimedia/Pictures/MASTERPICS:/app/test2:ro \
   -e TZ=America/Los_Angeles \
   --restart unless-stopped \
   --health-cmd='wget --no-verbose --tries=1 --spider http://localhost:8010/' \
