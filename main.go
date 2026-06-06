@@ -10,8 +10,6 @@ import (
 	"net/http"
 	"sync"
 	"time"
-
-	"github.com/gorilla/mux"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -293,11 +291,21 @@ func helloWorldHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Hello World"))
 }
 
+func withMethod(method string, next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != method {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		next(w, r)
+	}
+}
+
 // serveStaticFiles sets up a file server for static assets (like CSS, JS, images).
-func serveStaticFiles(router *mux.Router) {
+func serveStaticFiles(router *http.ServeMux) {
 	// Serve static files from /home/pimedia/Pictures/
 	staticFileServer := http.FileServer(http.Dir("/app/test2/"))
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", staticFileServer))
+	router.Handle("/static/", http.StripPrefix("/static/", staticFileServer))
 }
 
 func main() {
@@ -306,19 +314,19 @@ func main() {
 	// Start weather updater
 	startWeatherUpdater()
 
-	router := mux.NewRouter()
+	router := http.NewServeMux()
 
 	// Register handlers for HTML templates
-	router.HandleFunc("/", homeHandler).Methods("GET")
+	router.HandleFunc("/", withMethod(http.MethodGet, homeHandler))
 
 	// Add helloworld endpoint
-	router.HandleFunc("/helloworld", helloWorldHandler).Methods("GET")
+	router.HandleFunc("/helloworld", withMethod(http.MethodGet, helloWorldHandler))
 
 	// Add API endpoint for current image data
-	router.HandleFunc("/api/current-image", getCurrentImageJSON).Methods("GET")
+	router.HandleFunc("/api/current-image", withMethod(http.MethodGet, getCurrentImageJSON))
 
 	// Add API endpoint for weather
-	router.HandleFunc("/api/weather", getWeatherHandler).Methods("GET")
+	router.HandleFunc("/api/weather", withMethod(http.MethodGet, getWeatherHandler))
 
 	// Serve static files (optional, but good practice for real apps)
 	serveStaticFiles(router)
