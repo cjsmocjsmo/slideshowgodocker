@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	_ "modernc.org/sqlite"
 	"net/http"
 	"sync"
 	"time"
-	_ "modernc.org/sqlite"
 )
 
 // Global variable to store parsed templates
@@ -43,16 +43,7 @@ func startSlideshow() {
 		defer ticker.Stop()
 
 		for range ticker.C {
-			imageMutex.Lock()
-			if len(availableIndices) > 0 {
-				currentSlideIndex++
-				if currentSlideIndex >= len(availableIndices) {
-					currentSlideIndex = 0
-				}
-				currentImageIdx = availableIndices[currentSlideIndex]
-				log.Printf("Slideshow advanced to image index %d (position %d of %d)", currentImageIdx, currentSlideIndex+1, len(availableIndices))
-			}
-			imageMutex.Unlock()
+			advanceSlideshowAndBroadcast()
 		}
 	}()
 }
@@ -74,8 +65,8 @@ func main() {
 	// Add API endpoint for current image data
 	router.HandleFunc("/api/current-image", withMethod(http.MethodGet, getCurrentImageJSON))
 
-	// Add API endpoint for weather
-	router.HandleFunc("/api/weather", withMethod(http.MethodGet, getWeatherHandler))
+	// WebSocket endpoint for slideshow updates
+	router.HandleFunc("/ws", withMethod(http.MethodGet, slideshowWebSocketHandler))
 
 	// Serve static files (optional, but good practice for real apps)
 	serveStaticFiles(router)

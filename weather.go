@@ -96,12 +96,25 @@ func startWeatherUpdater() {
 				weatherMutex.Lock()
 				weatherCache = weather
 				weatherMutex.Unlock()
+				broadcastWeather(weather)
 			} else {
 				log.Printf("Weather fetch error: %v", err)
 			}
-			time.Sleep(15 * time.Minute)
+			time.Sleep(5 * time.Minute)
 		}
 	}()
+}
+
+func getCurrentWeatherData() (WeatherData, bool) {
+	weatherMutex.RLock()
+	weather := weatherCache
+	weatherMutex.RUnlock()
+
+	if weather.FetchedAt.IsZero() {
+		return WeatherData{}, false
+	}
+
+	return weather, true
 }
 
 func getWeatherHandler(w http.ResponseWriter, r *http.Request) {

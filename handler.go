@@ -81,6 +81,48 @@ func getDBImage(idx int) (ImageData, error) {
 	return img, nil
 }
 
+func getCurrentImageData() (ImageData, error) {
+	imageMutex.RLock()
+	idx := currentImageIdx
+	hasImages := len(availableIndices) > 0
+	imageMutex.RUnlock()
+
+	if !hasImages {
+		return ImageData{}, fmt.Errorf("no images available")
+	}
+
+	return getDBImage(idx)
+}
+
+func advanceSlideshowAndBroadcast() {
+	imageMutex.Lock()
+	if len(availableIndices) == 0 {
+		imageMutex.Unlock()
+		log.Printf("Slideshow tick skipped: no images available")
+		return
+	}
+
+	currentSlideIndex++
+	if currentSlideIndex >= len(availableIndices) {
+		currentSlideIndex = 0
+	}
+	currentImageIdx = availableIndices[currentSlideIndex]
+	idx := currentImageIdx
+	position := currentSlideIndex + 1
+	total := len(availableIndices)
+	imageMutex.Unlock()
+
+	log.Printf("Slideshow advanced to image index %d (position %d of %d)", idx, position, total)
+
+	data, err := getDBImage(idx)
+	if err != nil {
+		log.Printf("Error loading slideshow image for broadcast: %v", err)
+		return
+	}
+
+	broadcastSlide(data)
+}
+
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	imageMutex.RLock()
 	idx := currentImageIdx
@@ -111,19 +153,9 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 // getCurrentImageJSON returns the current image data as JSON
 func getCurrentImageJSON(w http.ResponseWriter, r *http.Request) {
-	imageMutex.RLock()
-	idx := currentImageIdx
-	imageMutex.RUnlock()
-
-	if len(availableIndices) == 0 {
-		http.Error(w, "No images available", http.StatusInternalServerError)
-		return
-	}
-
-	data, err := getDBImage(idx)
+	data, err := getCurrentImageData()
 	if err != nil {
-		log.Printf("Error getting image from database: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		http.Error(w, "No images available", http.StatusInternalServerError)
 		return
 	}
 
