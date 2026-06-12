@@ -15,6 +15,10 @@ RUN go mod download
 
 # Copy source code
 COPY main.go ./
+COPY handler.go ./
+COPY templates/ ./templates/
+COPY weather.go ./
+COPY ws.go ./
 
 # Build the application
 RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o slideshow main.go
