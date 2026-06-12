@@ -63,7 +63,7 @@ func main() {
 	router.HandleFunc("/helloworld", withMethod(http.MethodGet, helloWorldHandler))
 
 	// Add API endpoint for current image data
-	router.HandleFunc("/api/current-image", withMethod(http.MethodGet, getCurrentImageJSON))
+	// router.HandleFunc("/api/current-image", withMethod(http.MethodGet, getCurrentImageJSON))
 
 	// WebSocket endpoint for slideshow updates
 	router.HandleFunc("/ws", withMethod(http.MethodGet, slideshowWebSocketHandler))
