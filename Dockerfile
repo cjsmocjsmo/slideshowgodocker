@@ -21,7 +21,7 @@ COPY weather.go ./
 COPY ws.go ./
 
 # Build the application
-RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o slideshow main.go
+RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o slideshow
 
 # Runtime stage
 FROM alpine:latest
