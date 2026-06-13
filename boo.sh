@@ -1,3 +1,4 @@
+python3 setup.py
 docker build -t slideshowgodocker .
 docker run -d \
   --name slideshowgodocker \
