@@ -227,9 +227,10 @@
 </head>
 
 <body>
-    <div id="weather-bar">Loading weather...
+    <div id="weather-div">
+        <!-- <div id="weather-bar">Loading weather...</div> -->
         <!-- Background music from 101.5 HANK FM Seattle & Mad Rock 102.5 -->
-        <audio id="backgroundAudio" autoplay loop controls
+        <audio id="backgroundAudio" autoplay controls
             style="position: fixed; bottom: 10px; right: 10px; z-index: 1000; opacity: 0.8;">
             <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFMAAC.aac"
                 type="audio/aac">
@@ -245,10 +246,10 @@
         </audio>
 
         <!-- Fallback: Show message if audio doesn't work -->
-        <div id="audioMessage"
+        <!-- <div id="audioMessage"
             style="position: fixed; bottom: 60px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 10px; border-radius: 5px; font-size: 12px; display: none;">
             Click the audio player to start music
-        </div>
+        </div> -->
     </div>
 
     <div class="imgDiv">
