@@ -6,6 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SlideShow</title>
     <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            /* margin: 20px;  */
+            background-color: black;
+            padding-top: 60px;
+        }
+
+        #weather-div {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 2000;
+        }
+
         #weather-bar {
             width: 100vw;
             background: #222;
@@ -19,20 +38,6 @@
             left: 0;
             z-index: 2000;
             box-shadow: 0 2px 8px #000a;
-        }
-
-        body {
-            padding-top: 60px;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            /* margin: 20px;  */
-            background-color: black;
         }
 
         .imgDiv {
@@ -79,172 +84,28 @@
             box-shadow: 0 0 12px purple;
         }
     </style>
-    <script>
-        function applyWeatherData(data) {
-            let bar = document.getElementById('weather-bar');
-            if (!bar) return;
 
-            if (!data) {
-                bar.innerHTML = 'Weather unavailable';
-                return;
-            }
-
-            let icon = data.icon ? `<img src='${data.icon}' style='height:2em;vertical-align:middle;margin-right:8px;'>` : '';
-            let desc = data.description || '';
-            let temp = data.temperature || '';
-            bar.innerHTML = `${icon}${desc} ${temp}`;
-        }
-        let currentImageData = {
-            Name: "{{.Name}}",
-            Http: "{{.Http}}",
-            Orientation: "{{.Orientation}}"
-        };
-
-        // Function to try playing audio when page loads
-        function playAudio() {
-            const audio = document.getElementById('backgroundAudio');
-            const message = document.getElementById('audioMessage');
-
-            if (audio) {
-                audio.play().then(() => {
-                    console.log('Audio started successfully');
-                    if (message) message.style.display = 'none';
-                }).catch(e => {
-                    console.log('Autoplay was prevented:', e);
-                    if (message) message.style.display = 'block';
-                });
-            }
-        }
-
-        function renderImage(data) {
-            const imgDiv = document.querySelector('.imgDiv');
-            let imgClass = 'imgSquare';
-
-            if (data.Orientation === 'landscape') {
-                imgClass = 'imgLand';
-            } else if (data.Orientation === 'portrait') {
-                imgClass = 'imgPort';
-            }
-
-            const newContainer = document.createElement('div');
-            newContainer.className = 'imgContainer inactive';
-            newContainer.innerHTML = `<img class="${imgClass}" src="${data.Http}" alt="${data.Name}">`;
-
-            const activeContainer = imgDiv.querySelector('.imgContainer.active');
-            imgDiv.appendChild(newContainer);
-
-            const activateNewImage = function () {
-                newContainer.classList.remove('inactive');
-                newContainer.classList.add('active');
-
-                if (activeContainer) {
-                    activeContainer.classList.remove('active');
-                    activeContainer.classList.add('inactive');
-                    setTimeout(() => {
-                        if (activeContainer.parentNode) {
-                            activeContainer.parentNode.removeChild(activeContainer);
-                        }
-                    }, 2000);
-                }
-            };
-
-            const newImg = newContainer.querySelector('img');
-            newImg.onload = activateNewImage;
-            newImg.onerror = function () {
-                console.error('Failed to load image:', data.Http);
-                activateNewImage();
-            };
-        }
-
-        function applySlideData(data) {
-            if (!data || !data.Http || data.Http === currentImageData.Http) {
-                return;
-            }
-            currentImageData = data;
-            renderImage(data);
-            console.log('Image updated:', data.Name);
-        }
-
-        function connectSlideshowSocket() {
-            const scheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
-            const socket = new WebSocket(`${scheme}://${window.location.host}/ws`);
-
-            socket.addEventListener('message', function (event) {
-                try {
-                    const message = JSON.parse(event.data);
-                    if (message && message.type === 'slide' && message.data) {
-                        applySlideData(message.data);
-                    } else if (message && message.type === 'weather') {
-                        applyWeatherData(message.data);
-                    }
-                } catch (err) {
-                    console.error('Invalid websocket message:', err);
-                }
-            });
-
-            socket.addEventListener('close', function () {
-                setTimeout(connectSlideshowSocket, 3000);
-            });
-
-            socket.addEventListener('error', function (err) {
-                console.error('WebSocket error:', err);
-                socket.close();
-            });
-        }
-
-        // Try to play audio when page loads
-        window.addEventListener('load', function () {
-            setTimeout(playAudio, 1000); // Delay to help with loading
-            connectSlideshowSocket();
-        });
-
-        // Also try when user interacts with the page
-        document.addEventListener('click', function () {
-            const audio = document.getElementById('backgroundAudio');
-            const message = document.getElementById('audioMessage');
-            if (audio && audio.paused) {
-                audio.play().then(() => {
-                    if (message) message.style.display = 'none';
-                }).catch(e => console.log('Play failed:', e));
-            }
-        });
-
-        // Handle audio errors
-        window.addEventListener('load', function () {
-            const audio = document.getElementById('backgroundAudio');
-            if (audio) {
-                audio.addEventListener('error', function (e) {
-                    console.log('Audio error:', e);
-                    const message = document.getElementById('audioMessage');
-                    if (message) {
-                        message.innerHTML = 'Audio stream unavailable. Click to retry.';
-                        message.style.display = 'block';
-                    }
-                });
-            }
-        });
-    </script>
 </head>
 
 <body>
     <div id="weather-div">
-        <!-- <div id="weather-bar">Loading weather...</div> -->
-        <!-- Background music from 101.5 HANK FM Seattle & Mad Rock 102.5 -->
-        <audio id="backgroundAudio" autoplay controls
-            style="position: fixed; bottom: 10px; right: 10px; z-index: 1000; opacity: 0.8;">
-            <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFMAAC.aac"
-                type="audio/aac">
-            <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFM.mp3"
-                type="audio/mpeg">
-            <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KMADFMAAC.aac"
-                type="audio/aac">
-            <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KMADFM.mp3"
-                type="audio/mpeg">
-            <source src="https://ice42.securenetsystems.net/KPLZ" type="audio/mpeg">
-            <source src="https://ice42.securenetsystems.net/KMAD" type="audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
-
+        <div id="weather-bar">Loading weather...
+            <!-- Background music from 101.5 HANK FM Seattle & Mad Rock 102.5 -->
+            <audio id="backgroundAudio" autoplay="yes" controls="yes"
+                style="position: fixed; bottom: 10px; right: 10px; z-index: 1000; opacity: 0.8;">
+                <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFMAAC.aac"
+                    type="audio/aac">
+                <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFM.mp3"
+                    type="audio/mpeg">
+                <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KMADFMAAC.aac"
+                    type="audio/aac">
+                <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KMADFM.mp3"
+                    type="audio/mpeg">
+                <source src="https://ice42.securenetsystems.net/KPLZ" type="audio/mpeg">
+                <source src="https://ice42.securenetsystems.net/KMAD" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
         <!-- Fallback: Show message if audio doesn't work -->
         <!-- <div id="audioMessage"
             style="position: fixed; bottom: 60px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 10px; border-radius: 5px; font-size: 12px; display: none;">
@@ -264,5 +125,150 @@
         </div>
     </div>
 </body>
+<script>
+    function applyWeatherData(data) {
+        let bar = document.getElementById('weather-bar');
+        if (!bar) return;
+
+        if (!data) {
+            bar.innerHTML = 'Weather unavailable';
+            return;
+        }
+
+        let icon = data.icon ? `<img src='${data.icon}'>` : '';
+        let desc = data.description || '';
+        let temp = data.temperature || '';
+        bar.innerHTML = `${icon}${desc} ${temp}`;
+    }
+    let currentImageData = {
+        Name: "{{.Name}}",
+        Http: "{{.Http}}",
+        Orientation: "{{.Orientation}}"
+    };
+
+    // Function to try playing audio when page loads
+    function playAudio() {
+        const audio = document.getElementById('backgroundAudio');
+        const message = document.getElementById('audioMessage');
+
+        if (audio) {
+            audio.play().then(() => {
+                console.log('Audio started successfully');
+                if (message) message.style.display = 'none';
+            }).catch(e => {
+                console.log('Autoplay was prevented:', e);
+                if (message) message.style.display = 'block';
+            });
+        }
+    }
+
+    function renderImage(data) {
+        const imgDiv = document.querySelector('.imgDiv');
+        let imgClass = 'imgSquare';
+
+        if (data.Orientation === 'landscape') {
+            imgClass = 'imgLand';
+        } else if (data.Orientation === 'portrait') {
+            imgClass = 'imgPort';
+        }
+
+        const newContainer = document.createElement('div');
+        newContainer.className = 'imgContainer inactive';
+        newContainer.innerHTML = `<img class="${imgClass}" src="${data.Http}" alt="${data.Name}">`;
+
+        const activeContainer = imgDiv.querySelector('.imgContainer.active');
+        imgDiv.appendChild(newContainer);
+
+        const activateNewImage = function () {
+            newContainer.classList.remove('inactive');
+            newContainer.classList.add('active');
+
+            if (activeContainer) {
+                activeContainer.classList.remove('active');
+                activeContainer.classList.add('inactive');
+                setTimeout(() => {
+                    if (activeContainer.parentNode) {
+                        activeContainer.parentNode.removeChild(activeContainer);
+                    }
+                }, 2000);
+            }
+        };
+
+        const newImg = newContainer.querySelector('img');
+        newImg.onload = activateNewImage;
+        newImg.onerror = function () {
+            console.error('Failed to load image:', data.Http);
+            activateNewImage();
+        };
+    }
+
+    function applySlideData(data) {
+        if (!data || !data.Http || data.Http === currentImageData.Http) {
+            return;
+        }
+        currentImageData = data;
+        renderImage(data);
+        console.log('Image updated:', data.Name);
+    }
+
+    function connectSlideshowSocket() {
+        const scheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
+        const socket = new WebSocket(`${scheme}://${window.location.host}/ws`);
+
+        socket.addEventListener('message', function (event) {
+            try {
+                const message = JSON.parse(event.data);
+                if (message && message.type === 'slide' && message.data) {
+                    applySlideData(message.data);
+                } else if (message && message.type === 'weather') {
+                    applyWeatherData(message.data);
+                }
+            } catch (err) {
+                console.error('Invalid websocket message:', err);
+            }
+        });
+
+        socket.addEventListener('close', function () {
+            setTimeout(connectSlideshowSocket, 3000);
+        });
+
+        socket.addEventListener('error', function (err) {
+            console.error('WebSocket error:', err);
+            socket.close();
+        });
+    }
+
+    // Try to play audio when page loads
+    window.addEventListener('load', function () {
+        setTimeout(playAudio, 1000); // Delay to help with loading
+        connectSlideshowSocket();
+    });
+
+    // Also try when user interacts with the page
+    document.addEventListener('click', function () {
+        const audio = document.getElementById('backgroundAudio');
+        const message = document.getElementById('audioMessage');
+        if (audio && audio.paused) {
+            audio.play().then(() => {
+                if (message) message.style.display = 'none';
+            }).catch(e => console.log('Play failed:', e));
+        }
+    });
+
+    // Handle audio errors
+    window.addEventListener('load', function () {
+        const audio = document.getElementById('backgroundAudio');
+        if (audio) {
+            audio.addEventListener('error', function (e) {
+                console.log('Audio error:', e);
+                const message = document.getElementById('audioMessage');
+                if (message) {
+                    message.innerHTML = 'Audio stream unavailable. Click to retry.';
+                    message.style.display = 'block';
+                }
+            });
+        }
+    });
+</script>
 
 </html>
