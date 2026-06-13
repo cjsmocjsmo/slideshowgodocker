@@ -38,6 +38,14 @@
             font-size: 1.5em;
         }
 
+        #curtime {
+            color: white;
+            font-size: 1.5em;
+            font-family: monospace;
+            min-width: 11ch;
+            text-align: right;
+        }
+
         /* #weather-info {
             width: 100vw;
             background: #222;
@@ -159,6 +167,7 @@
     <div id="sticky-div">
         <div id="sticky-contents-div">
             <div id="weather-info">Loading weather...</div>
+            <div id="curtime"></div>
             <!-- Background music from 101.5 HANK FM Seattle & Mad Rock 102.5 -->
             <audio id="backgroundAudio" autoplay="yes" controls="yes">
                 <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFMAAC.aac"
@@ -274,6 +283,43 @@
         console.log('Image updated:', data.Name);
     }
 
+    function formatCurrentTime(now) {
+        let hours = now.getHours();
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+        const period = hours >= 12 ? 'PM' : 'AM';
+
+        hours = hours % 12;
+        if (hours === 0) {
+            hours = 12;
+        }
+
+        const hoursStr = String(hours).padStart(2, '0');
+        const minutesStr = String(minutes).padStart(2, '0');
+        const secondsStr = String(seconds).padStart(2, '0');
+
+        return `${hoursStr}:${minutesStr}:${secondsStr} ${period}`;
+    }
+
+    function updateCurrentTime() {
+        const curTimeDiv = document.getElementById('curtime');
+        if (!curTimeDiv) {
+            return;
+        }
+
+        curTimeDiv.textContent = formatCurrentTime(new Date());
+    }
+
+    function startAlignedClock() {
+        updateCurrentTime();
+
+        const delayToNextSecond = 1000 - new Date().getMilliseconds();
+        setTimeout(function () {
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000);
+        }, delayToNextSecond);
+    }
+
     function connectSlideshowSocket() {
         const scheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
         const socket = new WebSocket(`${scheme}://${window.location.host}/ws`);
@@ -305,6 +351,7 @@
     window.addEventListener('load', function () {
         setTimeout(playAudio, 1000); // Delay to help with loading
         connectSlideshowSocket();
+        startAlignedClock();
     });
 
     // Also try when user interacts with the page
