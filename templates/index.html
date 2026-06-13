@@ -91,6 +91,60 @@
             border-radius: 12px;
             box-shadow: 0 0 12px purple;
         }
+
+        /* Tablet screens */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .imgLand {
+                max-width: 92vw;
+                max-height: 60vh;
+            }
+
+            .imgPort {
+                max-width: 52vw;
+                max-height: 70vh;
+            }
+
+            .imgSquare {
+                max-width: 78vw;
+                max-height: 78vh;
+            }
+        }
+
+        /* Laptop screens */
+        @media (min-width: 1024px) and (max-width: 1919px) {
+            .imgLand {
+                max-width: 88vw;
+                max-height: 74vh;
+            }
+
+            .imgPort {
+                max-width: 42vw;
+                max-height: 80vh;
+            }
+
+            .imgSquare {
+                max-width: 72vw;
+                max-height: 78vh;
+            }
+        }
+
+        /* Large TV screens */
+        @media (min-width: 1920px) {
+            .imgLand {
+                max-width: 1900px;
+                max-height: 1069px;
+            }
+
+            .imgPort {
+                max-width: 760px;
+                max-height: 1350px;
+            }
+
+            .imgSquare {
+                max-width: 1650px;
+                max-height: 1650px;
+            }
+        }
     </style>
 
 </head>
@@ -130,7 +184,7 @@
 </body>
 <script>
     function applyWeatherData(data) {
-        let bar = document.getElementById('weather-bar');
+        let bar = document.getElementById('weather-info');
         if (!bar) return;
 
         if (!data) {
@@ -138,10 +192,10 @@
             return;
         }
 
-        let icon = data.icon ? `<img src='${data.icon}'>` : '';
-        let desc = data.description || '';
+        // let icon = data.icon ? `<img src='${data.icon}'>` : '';
+        // let desc = data.description || '';
         let temp = data.temperature || '';
-        bar.innerHTML = `${icon}${desc} ${temp}`;
+        bar.innerHTML = `${temp}`;
     }
     let currentImageData = {
         Name: "{{.Name}}",
