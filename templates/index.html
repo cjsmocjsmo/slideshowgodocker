@@ -16,15 +16,24 @@
             padding-top: 60px;
         }
 
-        #weather-div {
+        #sticky-div {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             z-index: 2000;
+            background: purple
         }
 
-        #weather-bar {
+        #sticky-contents-div {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 16px;
+        }
+
+        /* #weather-info {
             width: 100vw;
             background: #222;
             color: #fff;
@@ -37,7 +46,7 @@
             left: 0;
             z-index: 2000;
             box-shadow: 0 2px 8px #000a;
-        }
+        } */
 
         .imgDiv {
             display: flex;
@@ -87,11 +96,11 @@
 </head>
 
 <body>
-    <div id="weather-div">
-        <div id="weather-bar">Loading weather...
+    <div id="sticky-div">
+        <div id="sticky-contents-div">
+            <div id="weather-info">Loading weather...</div>
             <!-- Background music from 101.5 HANK FM Seattle & Mad Rock 102.5 -->
-            <audio id="backgroundAudio" autoplay="yes" controls="yes"
-                style="position: fixed; bottom: 10px; right: 10px; z-index: 1000; opacity: 0.8;">
+            <audio id="backgroundAudio" autoplay="yes" controls="yes">
                 <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFMAAC.aac"
                     type="audio/aac">
                 <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFM.mp3"
@@ -105,11 +114,6 @@
                 Your browser does not support the audio element.
             </audio>
         </div>
-        <!-- Fallback: Show message if audio doesn't work -->
-        <!-- <div id="audioMessage"
-            style="position: fixed; bottom: 60px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 10px; border-radius: 5px; font-size: 12px; display: none;">
-            Click the audio player to start music
-        </div> -->
     </div>
 
     <div class="imgDiv">
