@@ -49,21 +49,6 @@
             white-space: nowrap;
         }
 
-        /* #weather-info {
-            width: 100vw;
-            background: #222;
-            color: #fff;
-            font-size: 1.5em;
-            text-align: center;
-            padding: 18px 0 18px 0;
-            margin-bottom: 8px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 2000;
-            box-shadow: 0 2px 8px #000a;
-        } */
-
         .imgDiv {
             display: flex;
             justify-content: center;
@@ -168,7 +153,6 @@
             </audio>
         </div>
     </div>
-
     <div class="imgDiv">
         <div class="imgContainer active">
             {{if eq .Orientation "landscape"}}
@@ -191,8 +175,6 @@
             return;
         }
 
-        // let icon = data.icon ? `<img src='${data.icon}'>` : '';
-        // let desc = data.description || '';
         let temp = data.temperature || '';
         bar.innerHTML = `${temp}`;
     }
