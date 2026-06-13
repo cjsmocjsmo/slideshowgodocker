@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,10 +20,12 @@
             z-index: 2000;
             box-shadow: 0 2px 8px #000a;
         }
+
         body {
             padding-top: 60px;
         }
-        body { 
+
+        body {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -31,22 +34,27 @@
             /* margin: 20px;  */
             background-color: black;
         }
+
         .imgDiv {
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
         }
+
         .imgContainer {
             position: absolute;
             transition: opacity 2s ease-in-out;
         }
+
         .imgContainer.active {
             opacity: 1;
         }
+
         .imgContainer.inactive {
             opacity: 0;
-        }  
+        }
+
         .imgLand {
             max-width: 1400px;
             max-height: 788px;
@@ -54,6 +62,7 @@
             border-radius: 12px;
             box-shadow: 0 0 12px purple;
         }
+
         .imgPort {
             max-width: 563px;
             max-height: 1000px;
@@ -61,6 +70,7 @@
             border-radius: 12px;
             box-shadow: 0 0 12px purple;
         }
+
         .imgSquare {
             max-width: 1400px;
             max-height: 1400px;
@@ -94,7 +104,7 @@
         function playAudio() {
             const audio = document.getElementById('backgroundAudio');
             const message = document.getElementById('audioMessage');
-            
+
             if (audio) {
                 audio.play().then(() => {
                     console.log('Audio started successfully');
@@ -123,7 +133,7 @@
             const activeContainer = imgDiv.querySelector('.imgContainer.active');
             imgDiv.appendChild(newContainer);
 
-            const activateNewImage = function() {
+            const activateNewImage = function () {
                 newContainer.classList.remove('inactive');
                 newContainer.classList.add('active');
 
@@ -140,7 +150,7 @@
 
             const newImg = newContainer.querySelector('img');
             newImg.onload = activateNewImage;
-            newImg.onerror = function() {
+            newImg.onerror = function () {
                 console.error('Failed to load image:', data.Http);
                 activateNewImage();
             };
@@ -159,7 +169,7 @@
             const scheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
             const socket = new WebSocket(`${scheme}://${window.location.host}/ws`);
 
-            socket.addEventListener('message', function(event) {
+            socket.addEventListener('message', function (event) {
                 try {
                     const message = JSON.parse(event.data);
                     if (message && message.type === 'slide' && message.data) {
@@ -172,24 +182,24 @@
                 }
             });
 
-            socket.addEventListener('close', function() {
+            socket.addEventListener('close', function () {
                 setTimeout(connectSlideshowSocket, 3000);
             });
 
-            socket.addEventListener('error', function(err) {
+            socket.addEventListener('error', function (err) {
                 console.error('WebSocket error:', err);
                 socket.close();
             });
         }
 
         // Try to play audio when page loads
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             setTimeout(playAudio, 1000); // Delay to help with loading
             connectSlideshowSocket();
         });
-        
+
         // Also try when user interacts with the page
-        document.addEventListener('click', function() {
+        document.addEventListener('click', function () {
             const audio = document.getElementById('backgroundAudio');
             const message = document.getElementById('audioMessage');
             if (audio && audio.paused) {
@@ -198,12 +208,12 @@
                 }).catch(e => console.log('Play failed:', e));
             }
         });
-        
+
         // Handle audio errors
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             const audio = document.getElementById('backgroundAudio');
             if (audio) {
-                audio.addEventListener('error', function(e) {
+                audio.addEventListener('error', function (e) {
                     console.log('Audio error:', e);
                     const message = document.getElementById('audioMessage');
                     if (message) {
@@ -215,34 +225,43 @@
         });
     </script>
 </head>
+
 <body>
-    <div id="weather-bar">Loading weather...</div>
-    <!-- Background music from 101.5 HANK FM Seattle & Mad Rock 102.5 -->
-    <audio id="backgroundAudio" autoplay loop controls style="position: fixed; bottom: 10px; right: 10px; z-index: 1000; opacity: 0.8;">
-        <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFMAAC.aac" type="audio/aac">
-        <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFM.mp3" type="audio/mpeg">
-        <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KMADFMAAC.aac" type="audio/aac">
-        <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KMADFM.mp3" type="audio/mpeg">
-        <source src="https://ice42.securenetsystems.net/KPLZ" type="audio/mpeg">
-        <source src="https://ice42.securenetsystems.net/KMAD" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
-    
-    <!-- Fallback: Show message if audio doesn't work -->
-    <div id="audioMessage" style="position: fixed; bottom: 60px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 10px; border-radius: 5px; font-size: 12px; display: none;">
-        Click the audio player to start music
+    <div id="weather-bar">Loading weather...
+        <!-- Background music from 101.5 HANK FM Seattle & Mad Rock 102.5 -->
+        <audio id="backgroundAudio" autoplay loop controls
+            style="position: fixed; bottom: 10px; right: 10px; z-index: 1000; opacity: 0.8;">
+            <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFMAAC.aac"
+                type="audio/aac">
+            <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFM.mp3"
+                type="audio/mpeg">
+            <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KMADFMAAC.aac"
+                type="audio/aac">
+            <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KMADFM.mp3"
+                type="audio/mpeg">
+            <source src="https://ice42.securenetsystems.net/KPLZ" type="audio/mpeg">
+            <source src="https://ice42.securenetsystems.net/KMAD" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <!-- Fallback: Show message if audio doesn't work -->
+        <div id="audioMessage"
+            style="position: fixed; bottom: 60px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 10px; border-radius: 5px; font-size: 12px; display: none;">
+            Click the audio player to start music
+        </div>
     </div>
-    
+
     <div class="imgDiv">
         <div class="imgContainer active">
             {{if eq .Orientation "landscape"}}
-                <img class="imgLand" src="{{.Http}}" alt="{{.Name}}">
+            <img class="imgLand" src="{{.Http}}" alt="{{.Name}}">
             {{else if eq .Orientation "portrait"}}
-                <img class="imgPort" src="{{.Http}}" alt="{{.Name}}">
+            <img class="imgPort" src="{{.Http}}" alt="{{.Name}}">
             {{else}}
-                <img class="imgSquare" src="{{.Http}}" alt="{{.Name}}">
+            <img class="imgSquare" src="{{.Http}}" alt="{{.Name}}">
             {{end}}
         </div>
     </div>
 </body>
+
 </html>
