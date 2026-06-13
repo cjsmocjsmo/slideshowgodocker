@@ -42,8 +42,11 @@
             color: white;
             font-size: 1.5em;
             font-family: monospace;
-            min-width: 11ch;
+            width: 11ch;
             text-align: right;
+            font-variant-numeric: tabular-nums;
+            font-feature-settings: "tnum" 1;
+            white-space: nowrap;
         }
 
         /* #weather-info {
@@ -141,26 +144,7 @@
                 max-height: 78vh;
             }
         }
-
-        /* Large TV screens */
-        /* @media (min-width: 1920px) {
-            .imgLand {
-                max-width: 1900px;
-                max-height: 1069px;
-            }
-
-            .imgPort {
-                max-width: 760px;
-                max-height: 1350px;
-            }
-
-            .imgSquare {
-                max-width: 1650px;
-                max-height: 1650px;
-            }
-        } */
     </style>
-
 </head>
 
 <body>
