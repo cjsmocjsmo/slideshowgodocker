@@ -1,8 +1,8 @@
 DB_PATH=/home/pimedia/go/
 IMAGE_DIR=/home/pimedia/Pictures/MASTERPICS
 IMAGE_BASE_DIR=/home/pimedia/Pictures/MASTERPICS
-HTTP_PREFIX="/static/"
-RESET_DB="true"
+HTTP_PREFIX=/static/
+RESET_DB=true
 PORT=8010
 TIMEZONE="America/Los_Angeles"
 ARCH=$(uname -m)
