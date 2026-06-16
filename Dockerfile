@@ -17,7 +17,7 @@ RUN go mod download
 COPY main.go ./
 COPY handler.go ./
 COPY templates/ ./templates/
-COPY weather.go ./
+COPY utils.go ./
 COPY ws.go ./
 
 # Build the application
