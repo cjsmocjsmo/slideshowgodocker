@@ -1,4 +1,8 @@
-python3 setup.py
+# python3 setup.py
+cd ../slideshowsetuprust
+cargo run --release
+cd ../slideshowgodocker
+
 docker build -t slideshowgodocker .
 docker run -d \
   --name slideshowgodocker \
