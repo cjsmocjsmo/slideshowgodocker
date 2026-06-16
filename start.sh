@@ -1,4 +1,4 @@
-DB_PATH=/home/pimedia/go/
+DB_PATH=/home/pimedia/go/imagesDB
 IMAGE_DIR=/home/pimedia/Pictures/MASTERPICS
 IMAGE_BASE_DIR=/home/pimedia/Pictures/MASTERPICS
 HTTP_PREFIX=/static/
