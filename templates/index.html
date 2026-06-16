@@ -137,18 +137,11 @@
         <div id="sticky-contents-div">
             <div id="weather-info">Loading weather...</div>
             <div id="curtime"></div>
-            <!-- Background music from 101.5 HANK FM Seattle & Mad Rock 102.5 -->
+            <!-- Background music from configured single station -->
             <audio id="backgroundAudio" autoplay="yes" controls="yes">
-                <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFMAAC.aac"
-                    type="audio/aac">
-                <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFM.mp3"
-                    type="audio/mpeg">
-                <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KMADFMAAC.aac"
-                    type="audio/aac">
-                <source src="https://playerservices.streamtheworld.com/api/livestream-redirect/KMADFM.mp3"
-                    type="audio/mpeg">
-                <source src="https://ice42.securenetsystems.net/KPLZ" type="audio/mpeg">
-                <source src="https://ice42.securenetsystems.net/KMAD" type="audio/mpeg">
+                {{range .MusicSources}}
+                <source src="{{.Src}}" type="{{.Type}}">
+                {{end}}
                 Your browser does not support the audio element.
             </audio>
         </div>

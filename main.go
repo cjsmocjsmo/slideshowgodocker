@@ -34,6 +34,9 @@ func init() {
 	if len(availableIndices) > 0 {
 		currentImageIdx = availableIndices[0] // Start with first available index
 	}
+
+	// Load configurable music station sources.
+	loadMusicConfig()
 }
 
 // startSlideshow starts the automatic slideshow timer

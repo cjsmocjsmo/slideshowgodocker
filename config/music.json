@@ -1,0 +1,13 @@
+{
+	"name": "HANK FM Seattle",
+	"sources": [
+		{
+			"src": "https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFM.mp3",
+			"type": "audio/mpeg"
+		},
+		{
+			"src": "https://playerservices.streamtheworld.com/api/livestream-redirect/KPLZFMAAC.aac",
+			"type": "audio/aac"
+		}
+	]
+}

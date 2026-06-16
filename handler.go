@@ -15,6 +15,12 @@ type ImageData struct {
 	Orientation string
 }
 
+type HomePageData struct {
+	ImageData
+	MusicName    string
+	MusicSources []MusicSource
+}
+
 func dbCount() int {
 	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {
@@ -143,7 +149,14 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = templates.ExecuteTemplate(w, "index.html", data)
+	musicCfg := getMusicConfig()
+	pageData := HomePageData{
+		ImageData:    data,
+		MusicName:    musicCfg.Name,
+		MusicSources: musicCfg.Sources,
+	}
+
+	err = templates.ExecuteTemplate(w, "index.html", pageData)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		log.Printf("Error executing template: %v", err)
