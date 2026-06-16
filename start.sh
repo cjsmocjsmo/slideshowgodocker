@@ -1,4 +1,5 @@
 DB_PATH=/home/pimedia/go/imagesDB
+DB_DIR=/home/pimedia/go
 IMAGE_DIR=/home/pimedia/Pictures/MASTERPICS
 IMAGE_BASE_DIR=/home/pimedia/Pictures/MASTERPICS
 HTTP_PREFIX=/static/
@@ -41,7 +42,7 @@ docker build -t slideshowgodocker .
 docker run -d \
   --name slideshowgodocker \
   -p $PORT:$PORT \
-  -v $DB_PATH:/app/DB:rw \
+  -v $DB_DIR:/app/DB:rw \
   -v $IMAGE_DIR:/app/test2:ro \
   -e TZ=$TIMEZONE \
   --restart unless-stopped \
