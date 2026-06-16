@@ -1,3 +1,13 @@
+## Ex DB_PATH=/home/pimedia/go/imagesDB
+#DB_PATH=
+##Ex DB_DIR=/home/pimedia/go
+#DB_DIR=
+IMAGE_DIR=/home/pimedia/Pictures/MASTERPICS
+IMAGE_BASE_DIR=/home/pimedia/Pictures/MASTERPICS
+HTTP_PREFIX=/static/
+PORT=8010
+TIMEZONE="America/Los_Angeles"
+
 DB_PATH=/home/pimedia/go/imagesDB
 DB_DIR=/home/pimedia/go
 IMAGE_DIR=/home/pimedia/Pictures/MASTERPICS
@@ -32,11 +42,6 @@ else
     echo "Unsupported architecture: $ARCH"
     exit 1
 fi
-
-# python3 setup.py
-# cd ../slideshowsetuprust
-# cargo run --release
-# cd ../slideshowgodocker
 
 docker build -t slideshowgodocker .
 docker run -d \
