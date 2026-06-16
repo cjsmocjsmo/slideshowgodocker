@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	// "encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -150,18 +149,6 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Error executing template: %v", err)
 	}
 }
-
-// getCurrentImageJSON returns the current image data as JSON
-// func getCurrentImageJSON(w http.ResponseWriter, r *http.Request) {
-// 	data, err := getCurrentImageData()
-// 	if err != nil {
-// 		http.Error(w, "No images available", http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(data)
-// }
 
 // helloWorldHandler returns a simple "Hello World" message
 func helloWorldHandler(w http.ResponseWriter, r *http.Request) {
