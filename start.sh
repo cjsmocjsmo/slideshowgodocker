@@ -9,21 +9,21 @@ ARCH=$(uname -m)
 
 if [ "$ARCH" = "x86_64" ]; then
     echo "Running on x86_64 architecture"
-    /usr/bin/time -v ./rust/slideshowsetuprust-linux-amd64 \
+    time -v ./rust/slideshowsetuprust-linux-amd64 \
       --db-path=$DB_PATH \
       --image-dir=$IMAGE_DIR \
       --image-base-dir=$IMAGE_BASE_DIR \
       --http-prefix=$HTTP_PREFIX
 elif [ "$ARCH" = "aarch64" ]; then
     echo "Running on aarch64 architecture"
-    /usr/bin/time -v ./rust/slideshowsetuprust-linux-arm64 \
+    time -v ./rust/slideshowsetuprust-linux-arm64 \
       --db-path=$DB_PATH \
       --image-dir=$IMAGE_DIR \
       --image-base-dir=$IMAGE_BASE_DIR \
       --http-prefix=$HTTP_PREFIX 
 elif [ "$ARCH" = "armv7l" ]; then
     echo "Running on armv7l architecture"
-    /usr/bin/time -v ./rust/slideshowsetuprust-linux-armv7 \
+    time -v ./rust/slideshowsetuprust-linux-armv7 \
       --db-path=$DB_PATH \
       --image-dir=$IMAGE_DIR \
       --image-base-dir=$IMAGE_BASE_DIR \
