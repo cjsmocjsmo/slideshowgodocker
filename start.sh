@@ -8,22 +8,24 @@ TIMEZONE="America/Los_Angeles"
 ARCH=$(uname -m)
 
 if [ "$ARCH" = "x86_64" ]; then
-    echo "Running on x86_64 architecture"
-    time ./rust/slideshowsetuprust-linux-amd64 \
-      --db-path=$DB_PATH \
-      --image-dir=$IMAGE_DIR \
-      --image-base-dir=$IMAGE_BASE_DIR \
-      --http-prefix=$HTTP_PREFIX
+  echo "Unsupported architecture: $ARCH"
+  exit 1
+    # echo "Running on x86_64 architecture"
+    # time ./rust/slideshowsetuprust-linux-amd64 \
+    #   --db-path=$DB_PATH \
+    #   --image-dir=$IMAGE_DIR \
+    #   --image-base-dir=$IMAGE_BASE_DIR \
+    #   --http-prefix=$HTTP_PREFIX
 elif [ "$ARCH" = "aarch64" ]; then
     echo "Running on aarch64 architecture"
-    time ./rust/slideshowsetuprust-linux-arm64 \
+    time ./rust/slideshowsetuprust-rpi4-0.1.0 \
       --db-path=$DB_PATH \
       --image-dir=$IMAGE_DIR \
       --image-base-dir=$IMAGE_BASE_DIR \
       --http-prefix=$HTTP_PREFIX 
 elif [ "$ARCH" = "armv7l" ]; then
     echo "Running on armv7l architecture"
-    time ./rust/slideshowsetuprust-linux-armv7 \
+    time ./rust/slideshowsetuprust-rpi3-0.1.0 \
       --db-path=$DB_PATH \
       --image-dir=$IMAGE_DIR \
       --image-base-dir=$IMAGE_BASE_DIR \
