@@ -18,7 +18,7 @@ if [ "$ARCH" = "x86_64" ]; then
     #   --http-prefix=$HTTP_PREFIX
 elif [ "$ARCH" = "aarch64" ]; then
     echo "Running on aarch64 architecture"
-    time ./rust/slideshowsetuprust-rpi4-0.1.0 \
+    time ./rust/slideshowsetuprust-rpi4-0.1.1 \
       --install \
       --db-path=$DB_PATH \
       --image-dir=$IMAGE_DIR \
@@ -26,7 +26,7 @@ elif [ "$ARCH" = "aarch64" ]; then
       --http-prefix=$HTTP_PREFIX 
 elif [ "$ARCH" = "armv7l" ]; then
     echo "Running on armv7l architecture"
-    time ./rust/slideshowsetuprust-rpi3b-0.1.0 \
+    time ./rust/slideshowsetuprust-rpi3b-0.1.1 \
       --install \
       --db-path=$DB_PATH \
       --image-dir=$IMAGE_DIR \
