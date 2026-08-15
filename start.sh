@@ -1,7 +1,7 @@
-DB_PATH=/home/pimusic/go/imagesDB
-DB_DIR=/home/pimusic/go
-IMAGE_DIR=/home/pimusic/NFSShare/RustMasterPics
-IMAGE_BASE_DIR=/home/pimusic/NFSShare/RustMasterPics
+DB_PATH=/home/pi/go/imagesDB
+DB_DIR=/home/pi/go
+IMAGE_DIR=/home/pi/NFSShare/RustMasterPics
+IMAGE_BASE_DIR=/home/pi/NFSShare/RustMasterPics
 HTTP_PREFIX=/static/
 PORT=8010
 TIMEZONE="America/Los_Angeles"
