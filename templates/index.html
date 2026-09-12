@@ -138,6 +138,7 @@
             <div id="weather-info">Loading weather...</div>
             <div id="curtime"></div>
             <!-- Background music from configured single station -->
+            <div id="flacdetector">Checking FLAC support...</div>
             <audio id="backgroundAudio" autoplay="yes" controls="yes">
                 {{range .MusicSources}}
                 <source src="{{.Src}}" type="{{.Type}}">
@@ -159,6 +160,16 @@
     </div>
 </body>
 <script>
+    // Determine whether this browser can play FLAC audio
+    let canPlayFlac = (function () {
+        const testAudio = document.getElementById('backgroundAudio') || document.createElement('audio');
+        return !!(testAudio.canPlayType('audio/flac')
+            || testAudio.canPlayType('audio/x-flac')
+            || testAudio.canPlayType('audio/flac; codecs="flac"'));
+    })();
+    document.getElementById('flacdetector').textContent = `FLAC support: ${canPlayFlac}`;
+    console.log('canPlayFlac:', canPlayFlac);
+
     function applyWeatherData(data) {
         let bar = document.getElementById('weather-info');
         if (!bar) return;
