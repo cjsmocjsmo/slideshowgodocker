@@ -143,7 +143,7 @@
             <div id="weather-info">Loading weather...</div>
             <div id="curtime"></div>
             <!-- Background music from configured single station -->
-            <div id="flacdetector">Checking FLAC support...</div>
+            <div id="flacdetector">FLAC</div>
             <audio id="backgroundAudio" autoplay="yes" controls="yes">
                 {{range .MusicSources}}
                 <source src="{{.Src}}" type="{{.Type}}">
@@ -172,7 +172,10 @@
             || testAudio.canPlayType('audio/x-flac')
             || testAudio.canPlayType('audio/flac; codecs="flac"'));
     })();
-    document.getElementById('flacdetector').textContent = `FLAC support: ${canPlayFlac}`;
+    const flacElem = document.getElementById('flacdetector');
+    if (flacElem) {
+        flacElem.style.color = canPlayFlac ? 'green' : 'red';
+    }
     console.log('canPlayFlac:', canPlayFlac);
 
     function applyWeatherData(data) {
