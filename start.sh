@@ -1,5 +1,5 @@
-DB_PATH=/home/pi/go/imagesDB
-DB_DIR=/home/pi/go
+DB_PATH=/home/pimusic/go/imagesDB
+DB_DIR=/home/pimusic/go
 IMAGE_DIR=/mnt/NFSMusic/RustMasterPics
 IMAGE_BASE_DIR=/mnt/NFSMusic/RustMasterPics
 HTTP_PREFIX=/static/
