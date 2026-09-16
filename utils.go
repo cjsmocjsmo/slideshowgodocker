@@ -457,13 +457,13 @@ func getCurrentWeatherData() (WeatherData, bool) {
 	return weather, true
 }
 
-func getWeatherHandler(w http.ResponseWriter, r *http.Request) {
-	weatherMutex.RLock()
-	weather := weatherCache
-	weatherMutex.RUnlock()
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(weather)
-}
+// func getWeatherHandler(w http.ResponseWriter, r *http.Request) {
+// 	weatherMutex.RLock()
+// 	weather := weatherCache
+// 	weatherMutex.RUnlock()
+// 	w.Header().Set("Content-Type", "application/json")
+// 	json.NewEncoder(w).Encode(weather)
+// }
 
 const musicConfigPath = "config/music.json"
 

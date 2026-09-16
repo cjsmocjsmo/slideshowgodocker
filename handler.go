@@ -63,6 +63,10 @@ func getAvailableIndices() []int {
 		}
 		indices = append(indices, idx)
 	}
+	if err := rows.Err(); err != nil {
+		log.Printf("Error iterating indices: %v", err)
+		return []int{}
+	}
 
 	log.Printf("Available indices: %v", indices)
 	return indices
